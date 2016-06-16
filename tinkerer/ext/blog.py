@@ -60,7 +60,7 @@ def source_read(app, docname, source):
     '''
     Processes document after source is read.
     '''
-    metadata.get_metadata(app, docname)
+    metadata.get_metadata(app, docname, source)
 
 
 def env_updated(app, env):
