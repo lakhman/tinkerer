@@ -126,7 +126,7 @@ def get_metadata(app, docname, source):
 
             return
         else:
-            app.warn('Error, No `.. created::` directive was parsed for %s in articles' % docname)
+            app.warn('Error: No date (created directive) was found for `%s` in `blog`' % docname)
             return
 
     # if it's a page
