@@ -60,7 +60,7 @@ def source_read(app, docname, source):
     '''
     Processes document after source is read.
     '''
-    metadata.get_metadata(app, docname)
+    metadata.get_metadata(app, docname, source)
 
 
 def env_updated(app, env):
@@ -138,10 +138,9 @@ def setup(app):
     # new directives
     app.add_directive("author", author.AuthorDirective)
     app.add_directive("comments", metadata.CommentsDirective)
-    app.add_directive("tags",
-                      filing.create_filing_directive("tags"))
-    app.add_directive("categories",
-                      filing.create_filing_directive("categories"))
+    app.add_directive("created", metadata.CreatedDirective)
+    app.add_directive("tags", filing.create_filing_directive("tags"))
+    app.add_directive("categories", filing.create_filing_directive("categories"))
     app.add_directive("more", readmore.InsertReadMoreLink)
 
     # create a new Sphinx event which gets called when we generate aggregated
