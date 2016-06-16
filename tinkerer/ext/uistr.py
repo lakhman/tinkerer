@@ -32,7 +32,7 @@ class UIStr:
         UIStr.HOME = unicode(_("Home"), "utf-8")
         UIStr.RECENT_POSTS = unicode(_("Recent Posts"), "utf-8")
         UIStr.POSTED_BY = unicode(_("Posted by"), "utf-8")
-        UIStr.BLOG_ARCHIVE = unicode(_("Blog Archive"), "utf-8")
+        UIStr.BLOG_ARCHIVE = unicode(_("Blog Posts"), "utf-8")
         UIStr.FILED_UNDER = unicode(_("Filed under"), "utf-8")
         UIStr.TAGS = unicode(_("Tags"), "utf-8")
         UIStr.TAGS_CLOUD = unicode(_("Tags Cloud"), "utf-8")

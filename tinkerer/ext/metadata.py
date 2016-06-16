@@ -183,17 +183,18 @@ def process_metadata(app, env):
     # Get all docs not in the master doc (unrelated article items)
     unrelated_posts = [x for x in env.blog_metadata if x not in env.blog_posts]
 
+    # Add our unrelated docs to our blog_posts for writing to aggregated pages
     for post in unrelated_posts:
         if post not in ['glossary', 'master']:
-            # Add to our blog_posts list and mark it as an orphan
-            # We do this so we don't have to insert everything in the master doc
-            env.blog_posts.append(post)
-            env.blog_metadata[post].title = env.titles[post].astext()
-            env.metadata[post]['orphan'] = True
+            if env.blog_metadata[post].date:
+                # Add to our blog_posts list and mark it as an orphan
+                # We do this so we don't have to insert everything in the master doc
+                env.blog_posts.append(post)
+                env.blog_metadata[post].title = env.titles[post].astext()
+                env.metadata[post]['orphan'] = True
 
     # navigation menu consists of first aggregated page and all user pages
-    env.blog_page_list = [(page, env.titles[page].astext())
-                          for page in env.blog_pages]
+    env.blog_page_list = [(page, env.titles[page].astext()) for page in env.blog_pages]
 
     # if using a custom landing page, that should be at the top of the nav menu
     if app.config.landing_page:
