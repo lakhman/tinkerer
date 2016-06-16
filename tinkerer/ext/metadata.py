@@ -112,8 +112,15 @@ def get_metadata(app, docname, source):
 
         # If we have one, create a date from it
         if created:
-            # print m.groups()[0]
-            date_object = datetime.datetime.strptime(created.groups()[0].strip(), '%b %d, %Y')
+            created_string = created.groups()[0].strip()
+            try:
+                date_object = datetime.datetime.strptime(created_string, '%b %d, %Y')
+            except ValueError, error:
+                try:
+                    date_object = datetime.datetime.strptime(created_string, '%B %d, %Y')
+                except ValueError, error:
+                    date_object = datetime.datetime.today()
+                    app.warn('Error in parsing date for %s [%s], using today\'s date' % (docname, created_string))
 
             metadata.is_article = True
             metadata.link = docname
