@@ -39,6 +39,7 @@ class Metadata:
         '''
         self.is_post = False
         self.is_page = False
+        self.is_article = False
         self.title = None
         self.link = None
         self.date = None
@@ -46,6 +47,7 @@ class Metadata:
         self.formatted_date_short = None
         self.body = None
         self.author = None
+        self.excerpt = None
         self.filing = {"tags": [], "categories": []}
         self.comments, self.comment_count = False, False
         self.num = Metadata.num
@@ -73,7 +75,21 @@ class CommentsDirective(Directive):
         return []
 
 
-def get_metadata(app, docname):
+class CreatedDirective(Directive):
+    '''
+    Created directive. `.. created:: Feb 6, 2016`
+    This allows us to add a date for our `articles`
+    Articles are our posts with nicer url's
+    '''
+    required_arguments = 0
+    optional_arguments = 0
+    has_content = True
+
+    def run(self):
+        return []
+
+
+def get_metadata(app, docname, source):
     '''
     Extracts metadata from a document.
     '''
@@ -87,6 +103,31 @@ def get_metadata(app, docname):
 
     env.blog_metadata[docname] = Metadata()
     metadata = env.blog_metadata[docname]
+
+    # if it's an article
+    if docname.startswith("blog/"):
+        # Try to get parse our date directive from our source
+        # date should be in format: `Feb 6, 2016`
+        created = re.search("\.\.\screated::(.+)", source[0])
+
+        # If we have one, create a date from it
+        if created:
+            # print m.groups()[0]
+            date_object = datetime.datetime.strptime(created.groups()[0].strip(), '%b %d, %Y')
+
+            metadata.is_article = True
+            metadata.link = docname
+            metadata.date = date_object
+
+            # we format date here instead of inside template due to localization issues
+            # and Python2 vs Python3 incompatibility
+            metadata.formatted_date = format_ui_date(metadata.date)
+            metadata.formatted_date_short = format_short_ui_short(metadata.date)
+
+            return
+        else:
+            app.warn('Error, No `.. created::` directive was parsed for %s in articles' % docname)
+            return
 
     # if it's a page
     if docname.startswith("pages/"):
@@ -134,7 +175,7 @@ def process_metadata(app, env):
 
             # ignore if parent is not master (eg. nested pages)
             if relations[doc][0] == tinkerer.master_doc:
-                if env.blog_metadata[doc].is_post:
+                if env.blog_metadata[doc].is_post or env.blog_metadata[doc].is_article:
                     env.blog_posts.append(doc)
                 elif env.blog_metadata[doc].is_page:
                     env.blog_pages.append(doc)
