@@ -193,12 +193,21 @@ def process_metadata(app, env):
     # Add our unrelated docs to our blog_posts for writing to aggregated pages
     for post in unrelated_posts:
         if post not in ['glossary', 'master']:
-            if env.blog_metadata[post].date:
+            metadata = env.blog_metadata[post]
+            if metadata.date and metadata.date < datetime.datetime.now():
                 # Add to our blog_posts list and mark it as an orphan
                 # We do this so we don't have to insert everything in the master doc
                 env.blog_posts.append(post)
-                env.blog_metadata[post].title = env.titles[post].astext()
+                metadata.title = env.titles[post].astext()
                 env.metadata[post]['orphan'] = True
+            elif metadata.link:
+                # We must have a link attribute to identify this as a post
+                # Orphan "Draft" posts (posts with dates in the future), but log warning
+                env.metadata[post]['orphan'] = True
+                app.warn('[Draft] %s has a future date: %s' % (metadata.link, metadata.date.strftime('%d, %b %Y')))
+            else:
+                # We already warn about documents missing a date
+                pass
 
     # navigation menu consists of first aggregated page and all user pages
     env.blog_page_list = [(page, env.titles[page].astext()) for page in env.blog_pages]
