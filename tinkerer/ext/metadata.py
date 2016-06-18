@@ -105,7 +105,7 @@ def get_metadata(app, docname, source):
     metadata = env.blog_metadata[docname]
 
     # if it's an article
-    if docname.startswith("blog/"):
+    if docname.startswith("blog/") or docname.startswith("cheatsheets/"):
         # Try to get parse our date directive from our source
         # date should be in format: `Feb 6, 2016`
         created = re.search("\.\.\screated::(.+)", source[0])
