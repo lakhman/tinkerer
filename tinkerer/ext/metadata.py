@@ -93,6 +93,11 @@ def get_metadata(app, docname, source):
     '''
     Extracts metadata from a document.
     '''
+
+    # Ignore master and glossary pages
+    if docname in ['master', 'glossary']:
+        return
+
     env = app.builder.env
     language = app.config.language
     locale = Locale.parse(language) if language else Locale('en', 'US')
