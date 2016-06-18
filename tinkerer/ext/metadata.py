@@ -109,6 +109,9 @@ def get_metadata(app, docname, source):
     env.blog_metadata[docname] = Metadata()
     metadata = env.blog_metadata[docname]
 
+    # Default author unless overridden
+    metadata.author = app.env.config['author']
+
     # if it's an article
     if docname.startswith("blog/") or docname.startswith("cheatsheets/"):
         # Try to get parse our date directive from our source
