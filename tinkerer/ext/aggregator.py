@@ -64,11 +64,11 @@ def make_aggregated_pages(app):
         else:
             # following pages prev-link to previous page (titled as "Newer")
             context["prev"]["title"] = UIStr.NEWER
-            context["prev"]["link"] = "page%d.html" % i
+            context["prev"]["link"] = "page%d" % i
 
             # if no landing_page, prev link for second page is "index"
             if i == 1 and not landing_page:
-                context["prev"]["link"] = "index.html"
+                context["prev"]["link"] = "index"
 
             context["title"] = UIStr.PAGE_FMT % (i + 1)
 
@@ -78,7 +78,7 @@ def make_aggregated_pages(app):
         else:
             # other pages next-link to following page (titled as "Older")
             context["next"]["title"] = UIStr.OLDER
-            context["next"]["link"] = "page%d.html" % (i + 2)
+            context["next"]["link"] = "page%d" % (i + 2)
 
         context["archive_title"] = UIStr.BLOG_ARCHIVE
 
