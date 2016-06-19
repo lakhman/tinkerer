@@ -27,6 +27,7 @@ def initialize(app):
     Initializes metadata in environment.
     '''
     app.builder.env.blog_metadata = dict()
+    app.builder.env.blog_warnings = []
 
 
 class Metadata:
@@ -133,7 +134,13 @@ def get_metadata(app, docname, source):
                     date_object = datetime.datetime.strptime(created_string, '%B %d, %Y')
                 except ValueError, error:
                     date_object = datetime.datetime.today()
-                    app.warn('Error in parsing date for %s [%s], using today\'s date' % (docname, created_string))
+                    warnMsg = {
+                        'type': 'Error',
+                        'docname': docname,
+                        'message': 'Error in parsing date for %s [%s], using today\'s date' % (docname, created_string)
+                    }
+                    env.blog_warnings.append(warnMsg)
+                    app.warn("%s %s" % (warnMsg['type'], warnMsg['message']))
 
             metadata.is_article = True
             metadata.link = docname
@@ -146,7 +153,13 @@ def get_metadata(app, docname, source):
 
             return
         else:
-            app.warn('Error: No date (created directive) was found for `%s` in `blog`' % docname)
+            warnMsg = {
+                'type': 'no_created_date',
+                'docname': docname,
+                'message': 'No date (created directive) was found for `%s`' % docname
+            }
+            env.blog_warnings.append(warnMsg)
+            app.warn("%s %s" % (warnMsg['type'], warnMsg['message']))
             return
 
     # if it's a page
@@ -217,7 +230,13 @@ def process_metadata(app, env):
                 # We must have a link attribute to identify this as a post
                 # Orphan "Draft" posts (posts with dates in the future), but log warning
                 env.metadata[post]['orphan'] = True
-                app.warn('[Draft] %s has a future date: %s' % (metadata.link, metadata.date.strftime('%d, %b %Y')))
+                warnMsg = {
+                    'type': 'draft',
+                    'docname': metadata.link,
+                    'message': '%s has a future date: %s' % (metadata.link, metadata.date.strftime('%d, %b %Y'))
+                }
+                env.blog_warnings.append(warnMsg)
+                app.warn("%s %s" % (warnMsg['type'], warnMsg['message']))
             else:
                 # We already warn about documents missing a date
                 pass
