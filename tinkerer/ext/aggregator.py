@@ -30,21 +30,9 @@ def make_aggregated_pages(app):
             "index.html"
         )
 
-    # Sort our posts by date before appending to agg pages
-    sortedList = []
-    for doc in env.blog_posts:
-        if env.blog_metadata[doc]:
-            sortedList.append(copy.deepcopy(env.blog_metadata[doc]))
-    sortedList.sort(key=lambda r: r.date, reverse=True)
-
-    # Loop over our list and just get the key back - LOL - this could be better done
-    sortedStringList = []
-    for metadata in sortedList:
-        sortedStringList.append(metadata.link)
-
     # get post groups
-    groups = [sortedStringList[i:i+posts_per_page]
-              for i in range(0, len(sortedStringList), posts_per_page)]
+    groups = [env.blog_posts[i:i+posts_per_page]
+              for i in range(0, len(env.blog_posts), posts_per_page)]
 
     # for each group
     for i, posts in enumerate(groups):

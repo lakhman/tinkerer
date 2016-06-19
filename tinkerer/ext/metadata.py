@@ -11,10 +11,12 @@
 '''
 import re
 import datetime
+import copy
 from functools import partial
 from sphinx.util.compat import Directive
 from babel.core import Locale
 from babel.dates import format_date
+
 import tinkerer
 from tinkerer.ext.uistr import UIStr
 from tinkerer.utils import name_from_title
@@ -220,6 +222,20 @@ def process_metadata(app, env):
                 # We already warn about documents missing a date
                 pass
 
+    # Sort our blog_posts by date
+    sortedList = []
+    for doc in env.blog_posts:
+        if env.blog_metadata[doc]:
+            sortedList.append(copy.deepcopy(env.blog_metadata[doc]))
+    sortedList.sort(key=lambda r: r.date, reverse=True)
+
+    # Loop over our list and just get the key back - LOL - this could be better done
+    sortedStringList = []
+    for metadata in sortedList:
+        sortedStringList.append(metadata.link)
+
+    env.blog_posts = sortedStringList
+
     # navigation menu consists of first aggregated page and all user pages
     env.blog_page_list = [(page, env.titles[page].astext()) for page in env.blog_pages]
 
@@ -288,6 +304,24 @@ def add_metadata(app, pagename, context):
                 context["prev"] = None
             if pagename == env.blog_posts[-1]:
                 context["next"] = None
+
+            # If it's a custom article, we add our own prev and next
+            # above will be none
+            if env.blog_metadata[pagename].is_article:
+                if pagename == 'cheatsheets/sphinx/bootstrap-restructured-text-sphinx-directives':
+                    pass
+
+                pindex = env.blog_posts.index(pagename)
+                prevIndex = pindex + 1
+                nextIndex = pindex - 1
+
+                if prevIndex < len(env.blog_posts):
+                    context["prev"] = env.blog_metadata[env.blog_posts[prevIndex]]
+
+                if nextIndex >= 0:
+                    context["next"] = env.blog_metadata[env.blog_posts[nextIndex]]
+
+
         # if this is not documententation
         elif not (pagename.startswith("doc/") or pagename.startswith("docs/")):
             # no rellinks for non-posts/docs
