@@ -118,6 +118,9 @@ def get_metadata(app, docname, source):
         # date should be in format: `Feb 6, 2016`
         created = re.search("\.\.\screated::(.+)", source[0])
 
+        # Add previous and next links manually after sorting
+        # after doctree resolved? - somewhere else
+
         # If we have one, create a date from it
         if created:
             created_string = created.groups()[0].strip()
