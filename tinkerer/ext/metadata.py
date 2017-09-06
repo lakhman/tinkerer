@@ -116,7 +116,7 @@ def get_metadata(app, docname, source):
     metadata.author = app.env.config['author']
 
     # if it's an article
-    if docname.startswith("blog/") or docname.startswith("cheatsheets/"):
+    if docname.startswith("blog/"):
         # Try to get parse our date directive from our source
         # date should be in format: `Feb 6, 2016`
         created = re.search("\.\.\screated::(.+)", source[0])
@@ -326,19 +326,19 @@ def add_metadata(app, pagename, context):
 
             # If it's a custom article, we add our own prev and next
             # above will be none
-            if env.blog_metadata[pagename].is_article:
-                if pagename == 'cheatsheets/sphinx/bootstrap-restructured-text-sphinx-directives':
-                    pass
-
-                pindex = env.blog_posts.index(pagename)
-                prevIndex = pindex + 1
-                nextIndex = pindex - 1
-
-                if prevIndex < len(env.blog_posts):
-                    context["prev"] = env.blog_metadata[env.blog_posts[prevIndex]]
-
-                if nextIndex >= 0:
-                    context["next"] = env.blog_metadata[env.blog_posts[nextIndex]]
+            # if env.blog_metadata[pagename].is_article:
+            #     if pagename == 'cheatsheets/sphinx/bootstrap-restructured-text-sphinx-directives':
+            #         pass
+            #
+            #     pindex = env.blog_posts.index(pagename)
+            #     prevIndex = pindex + 1
+            #     nextIndex = pindex - 1
+            #
+            #     if prevIndex < len(env.blog_posts):
+            #         context["prev"] = env.blog_metadata[env.blog_posts[prevIndex]]
+            #
+            #     if nextIndex >= 0:
+            #         context["next"] = env.blog_metadata[env.blog_posts[nextIndex]]
 
 
         # if this is not documententation
