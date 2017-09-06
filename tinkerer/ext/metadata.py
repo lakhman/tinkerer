@@ -129,18 +129,18 @@ def get_metadata(app, docname, source):
             created_string = created.groups()[0].strip()
             try:
                 date_object = datetime.datetime.strptime(created_string, '%b %d, %Y')
-            except ValueError, error:
+            except ValueError as error:
                 try:
                     date_object = datetime.datetime.strptime(created_string, '%B %d, %Y')
-                except ValueError, error:
+                except ValueError as error:
                     date_object = datetime.datetime.today()
-                    warnMsg = {
+                    warn_msg = {
                         'type': 'Error',
                         'docname': docname,
-                        'message': 'Error in parsing date for %s [%s], using today\'s date' % (docname, created_string)
+                        'message': 'Error in parsing date [%s]' % created_string
                     }
-                    env.blog_warnings.append(warnMsg)
-                    app.warn("%s %s" % (warnMsg['type'], warnMsg['message']))
+                    env.blog_warnings.append(warn_msg)
+                    app.warn("%s %s %s" % (warn_msg['type'], warn_msg['message'], warn_msg['docname']))
 
             metadata.is_article = True
             metadata.link = docname
@@ -153,13 +153,13 @@ def get_metadata(app, docname, source):
 
             return
         else:
-            warnMsg = {
+            warn_msg = {
                 'type': 'no_created_date',
                 'docname': docname,
-                'message': 'No date (created directive) was found for `%s`' % docname
+                'message': 'No date (created directive) was found'
             }
-            env.blog_warnings.append(warnMsg)
-            app.warn("%s %s" % (warnMsg['type'], warnMsg['message']))
+            env.blog_warnings.append(warn_msg)
+            app.warn("%s %s %s" % (warn_msg['type'], warn_msg['message'], warn_msg['docname']))
             return
 
     # if it's a page
@@ -230,30 +230,30 @@ def process_metadata(app, env):
                 # We must have a link attribute to identify this as a post
                 # Orphan "Draft" posts (posts with dates in the future), but log warning
                 env.metadata[post]['orphan'] = True
-                warnMsg = {
+                warn_msg = {
                     'type': 'draft',
                     'docname': metadata.link,
-                    'message': '%s has a future date: %s' % (metadata.link, metadata.date.strftime('%d, %b %Y'))
+                    'message': 'Has a future date: %s' % (metadata.date.strftime('%d, %b %Y'))
                 }
-                env.blog_warnings.append(warnMsg)
-                app.warn("%s %s" % (warnMsg['type'], warnMsg['message']))
+                env.blog_warnings.append(warn_msg)
+                app.warn("%s %s" % (warn_msg['type'], warn_msg['message']))
             else:
                 # We already warn about documents missing a date
                 pass
 
     # Sort our blog_posts by date
-    sortedList = []
+    sorted_list = []
     for doc in env.blog_posts:
         if env.blog_metadata[doc]:
-            sortedList.append(copy.deepcopy(env.blog_metadata[doc]))
-    sortedList.sort(key=lambda r: r.date, reverse=True)
+            sorted_list.append(copy.deepcopy(env.blog_metadata[doc]))
+    sorted_list.sort(key=lambda r: r.date, reverse=True)
 
     # Loop over our list and just get the key back - LOL - this could be better done
-    sortedStringList = []
-    for metadata in sortedList:
-        sortedStringList.append(metadata.link)
+    sorted_string_list = []
+    for metadata in sorted_list:
+        sorted_string_list.append(metadata.link)
 
-    env.blog_posts = sortedStringList
+    env.blog_posts = sorted_string_list
 
     # navigation menu consists of first aggregated page and all user pages
     env.blog_page_list = [(page, env.titles[page].astext()) for page in env.blog_pages]
