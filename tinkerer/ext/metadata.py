@@ -236,7 +236,7 @@ def process_metadata(app, env):
                     'message': 'Has a future date: %s' % (metadata.date.strftime('%d, %b %Y'))
                 }
                 env.blog_warnings.append(warn_msg)
-                app.warn("%s %s" % (warn_msg['type'], warn_msg['message']))
+                app.warn("%s %s %s" % (warn_msg['type'], warn_msg['message'], warn_msg['docname']))
             else:
                 # We already warn about documents missing a date
                 pass
