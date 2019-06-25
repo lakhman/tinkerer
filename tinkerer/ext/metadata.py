@@ -13,7 +13,7 @@ import re
 import datetime
 import copy
 from functools import partial
-from sphinx.util.compat import Directive
+from docutils.parsers.rst import Directive
 from babel.core import Locale
 from babel.dates import format_date
 
